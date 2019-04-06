@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <title>Share your comments on the lastest fashion picks</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <div class="page-header text-center">
+      <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+      <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+
+      <!-- LOCAL INFORMATION -->
+      <div class="col-sm-6" style="display:none;">
+        <div class="well">
+          <h3><span class="fa fa-user"></span> Local</h3>
+
+          <% if (user.local.email) { %>
+          <p>
+            <strong>id</strong>: <%= user._id %><br>
+            <strong>email</strong>: <%= user.local.email %><br>
+            <strong>password</strong>: <%= user.local.password %>
+          </p>
+
+          <a href="/unlink/local" class="btn btn-default">Unlink</a>
+          <% } else { %>
+          <a href="/connect/local" class="btn btn-default">Connect Local</a>
+          <% } %>
+
+        </div>
+      </div>
+
+      <% if(cart != null) { %>
+      <div class="col-sm-6">
+        <h3>Cart</h3>
+          <ul class="clothes">
+            <%
+            var subtotal = 0
+            Object.keys(cart.clothes).forEach(function(key){%>
+            <li id="<%= key %>" class="clothes">
+              <%
+                var clothing = clothes.filter(obj => {
+                  return obj._id.toString() === key
+                })[0]
+              %>
+              <img src='<%= clothing.img %>' />
+              <span><%= clothing.description %></span>
+              <span>Price: $<%= clothing.price %></span>
+              <span>QTY: <%= cart.clothes[key].QTY %></span>
+              <span><i class="fas fa-trash"></i>: </span>
+              <% subtotal += clothing.price*cart.clothes[key].QTY %>
+            </li>
+            <% }) %>
+          </ul>
+          <span>Subtotal: $<%= subtotal %></span>
+      </div>
+      <% } %>
+
+      <div class="col-sm-6">
+        <h3>Clothes</h3>
+          <ul class="clothes">
+            <% for(var i=0; i<clothes.length; i++) {%>
+            <li id="<%= clothes[i]._id %>" class="clothes">
+              <img src='<%= clothes[i].img %>' />
+              <span><%= clothes[i].description %></span>
+              <span>Price: $<%= clothes[i].price %></span>
+              <span><i class="fas fa-shopping-bag"></i></span>
+            </li>
+            <% } %>
+          </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+  <% if(cart != null) { %>
+    <% console.log(cart) %>
+    var cart = <%- JSON.stringify(cart) %>
+  <% }else {%>
+    var cart = {
+      _id: null,
+      user: '<%= user.local.email %>',
+      clothes: {}
+    }
+  <% } %>
+  </script>
+  <script src="main.js"></script>
+</body>
+</html>
